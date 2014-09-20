@@ -228,8 +228,10 @@ def executeTestCase(packageName, serialNumber, dirRoot, scriptFilename):
     execCommand('adb -s %s logcat -c' % serialNumber, 'Clearing logcat buffer...')
     pLogcat = execCommand('adb -s %s logcat -v threadtime > %s/%s' % (serialNumber, dirResults, FILENAME_LOGCAT), 'Start printing logcat output to file...', wait=False)[0]
 
-    # Execute test script
-    execCommand('python %s/%s' % (DIR_TEST_SCRIPTS, scriptFilename), 'Executing [%s]...' % scriptFilename)
+    # Execute local copy of the test script
+    runTestCmd = 'python %s/%s -p %s -s %s -d %s' % (dirResults, scriptFilename, packageName, serialNumber, subDirScreenshots)
+    print 'Execute: %s' % runTestCmd
+    execCommand(runTestCmd, 'Executing [%s]...' % scriptFilename)
 
     # Stop logcat
     os.killpg(pLogcat.pid, signal.SIGTERM)
