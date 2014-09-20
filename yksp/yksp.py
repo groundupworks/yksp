@@ -37,12 +37,17 @@ from com.dtmilano.android.viewclient import ViewClient
 FILENAME_DEVICE_SERIALS = 'serials.txt'
 FILENAME_DEVICE_PROPERTIES = 'device.txt'
 FILENAME_LOGCAT = 'logcat.txt'
+FILENAME_PYUNIT = 'pyunit.txt'
 FILENAME_APP_DATA_BACKUP = 'data.ab'
+
+FOLDER_APP_DATA = 'data'
+FOLDER_SCREENSHOTS = 'screenshots'
+FOLDER_SCREENDUMPS = 'screendumps'
+
 DIR_TEST_SCRIPTS = 'scripts'
 DIR_TEST_RESULTS = 'results'
 DIR_TEST_SESSION = '%s/%s' % (DIR_TEST_RESULTS, datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d-%H-%M-%S'))
-DIR_TEST_APP_DATA = 'data'
-DIR_TEST_SCREENSHOTS = 'screenshots'
+
 PACKAGE_BACKUP_CONFIRM = 'com.android.backupconfirm'
 ID_BUTTON_BACKUP_ACCEPT = 'id/no_id/21'
 
@@ -216,12 +221,10 @@ def executeTestCase(packageName, serialNumber, dirRoot, scriptFilename):
     # Create directories to store test case results
     dirResults = '%s/%s' % (dirRoot, os.path.splitext(scriptFilename)[0])
     os.mkdir(dirResults)
-    subDirData = '%s/%s' % (dirResults, DIR_TEST_APP_DATA)
-    os.mkdir(subDirData)
-    subDirScreenshots = '%s/%s' % (dirResults, DIR_TEST_SCREENSHOTS)
-    os.mkdir(subDirScreenshots)
+    dirData = '%s/%s' % (dirResults, FOLDER_APP_DATA)
+    os.mkdir(dirData)
     
-    # Make a copy of the test script
+    # Make a local copy of the test script
     shutil.copy('%s/%s' % (DIR_TEST_SCRIPTS, scriptFilename), dirResults)
 
     # Start logcat
@@ -229,9 +232,8 @@ def executeTestCase(packageName, serialNumber, dirRoot, scriptFilename):
     pLogcat = execCommand('adb -s %s logcat -v threadtime > %s/%s' % (serialNumber, dirResults, FILENAME_LOGCAT), 'Start printing logcat output to file...', wait=False)[0]
 
     # Execute local copy of the test script
-    runTestCmd = 'python %s/%s -p %s -s %s -d %s' % (dirResults, scriptFilename, packageName, serialNumber, subDirScreenshots)
-    print 'Execute: %s' % runTestCmd
-    execCommand(runTestCmd, 'Executing [%s]...' % scriptFilename)
+    runTestCmd = 'python %s/%s --package %s --serial %s --root %s --logs %s --screenshots %s --screendumps %s' % (dirResults, scriptFilename, packageName, serialNumber, dirResults, FILENAME_PYUNIT, FOLDER_SCREENSHOTS, FOLDER_SCREENDUMPS)
+    execCommand(runTestCmd, 'Executing [%s] with command:\n%s' % (scriptFilename, runTestCmd))
 
     # Stop logcat
     os.killpg(pLogcat.pid, signal.SIGTERM)
@@ -256,7 +258,7 @@ def executeTestCase(packageName, serialNumber, dirRoot, scriptFilename):
         pBackup.communicate()
 
         # Extract backed up data
-        tExtract = execCommand('dd if=%s/%s bs=1 skip=24 | python -c "import zlib, sys; sys.stdout.write(zlib.decompress(sys.stdin.read()))" | tar -xvf - -C %s' % (dirResults, FILENAME_APP_DATA_BACKUP, subDirData), 'Extracting app data...')
+        tExtract = execCommand('dd if=%s/%s bs=1 skip=24 | python -c "import zlib, sys; sys.stdout.write(zlib.decompress(sys.stdin.read()))" | tar -xvf - -C %s' % (dirResults, FILENAME_APP_DATA_BACKUP, dirData), 'Extracting app data...')
         print tExtract[1]
         print tExtract[2]
 
