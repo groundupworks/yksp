@@ -257,6 +257,9 @@ def executeTestCase(packageName, serialNumber, dirRoot, scriptFilename):
         # Wait for backup to complete
         pBackup.communicate()
 
+        # Wait to prevent deadlock
+        time.sleep(1)
+
         # Extract backed up data
         tExtract = execCommand('dd if=%s/%s bs=1 skip=24 | python -c "import zlib, sys; sys.stdout.write(zlib.decompress(sys.stdin.read()))" | tar -xvf - -C %s' % (dirResults, FILENAME_APP_DATA_BACKUP, dirData), 'Extracting app data...')
         print tExtract[1]
