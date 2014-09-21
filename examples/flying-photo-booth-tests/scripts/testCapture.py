@@ -27,7 +27,7 @@ except:
 from com.dtmilano.android.viewclient import ViewNotFoundException
 
 try:
-    sys.path.append(os.environ['ANDROID_YKSP'])
+    sys.path.append(os.environ['ANDROID_YKSP_HOME'])
 except:
     pass
 
