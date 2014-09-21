@@ -59,6 +59,8 @@ ID_BUTTON_BACKUP_ACCEPT = 'id/no_id/21'
 # Global variables
 ###################
 runLinear = False
+fromPackage = None
+skipDump = False
 
 processes = []
 subprocesses = Queue()
@@ -298,7 +300,7 @@ def uninstallApp(packageName, serialNumber, subprocessQueue):
     '''
     execCommand('adb -s %s uninstall %s' % (serialNumber, packageName), subprocessQueue, '[%s] Uninstalling application...' % serialNumber)
 
-def executeTestCase(packageName, serialNumber, dirRoot, scriptFilename, subprocessQueue):
+def executeTestCase(packageName, serialNumber, dirRoot, scriptFilename, dataDump, subprocessQueue):
     '''
     Executes a test script and performs all logging and clean-up associated with running the test case.
 
@@ -310,6 +312,8 @@ def executeTestCase(packageName, serialNumber, dirRoot, scriptFilename, subproce
     @param dirRoot: The root directory to put the results of this test case.
     @type scriptFilename: str
     @param scriptFilename: The test script to run.
+    @type dataDump: boolean
+    @param dataDump: True to dump app data after executing each test script; or False to skip.
     @type subprocessQueue: Queue
     @param subprocessQueue: The queue to add new subprocesses to.
     '''
@@ -334,56 +338,61 @@ def executeTestCase(packageName, serialNumber, dirRoot, scriptFilename, subproce
     os.killpg(pLogcat.pid, signal.SIGTERM)
     print '[%s] Logcat output saved' % serialNumber
 
-    # Navigate to home screen and force-stop any stale backup confirmations
-    execCommand('adb shell input keyevent KEYCODE_HOME', subprocessQueue)
-    execCommand('adb -s %s shell am force-stop %s' % (serialNumber, PACKAGE_BACKUP_CONFIRM), subprocessQueue)
-
-    # Send app backup request
-    appDataBackup = '%s/%s' % (dirResults, FILENAME_APP_DATA_BACKUP)
-    pBackup = execCommand('adb -s %s backup -f %s %s' % (serialNumber, appDataBackup, packageName), subprocessQueue, '[%s] Downloading app data from device...' % serialNumber, wait=False)[0]
-
-    # Send button click to accept backup on device
-    device, serialno = ViewClient.connectToDeviceOrExit(serialno=serialNumber)
-    vc = ViewClient(device, serialno)
-    acceptButton = vc.findViewById(ID_BUTTON_BACKUP_ACCEPT)
-    if acceptButton and acceptButton.isEnabled():
-        acceptButton.touch()
-
-        # Wait for backup to complete
-        pBackup.communicate()
-
-        # Wait to prevent deadlock
-        time.sleep(1)
-
-        # Extract backed up data
-        tExtract = execCommand('dd if=%s/%s bs=1 skip=24 | python -c "import zlib, sys; sys.stdout.write(zlib.decompress(sys.stdin.read()))" | tar -xvf - -C %s' % (dirResults, FILENAME_APP_DATA_BACKUP, dirData), subprocessQueue, '[%s] Extracting app data...' % serialNumber)
-        print tExtract[1]
-        print tExtract[2]
-
-        print '[%s] App data downloaded' % serialNumber
-    else:
-        os.killpg(pBackup.pid, signal.SIGTERM)
-
-        # Clean up backup confirmation and corrupt backup file
+    # Perform app data dump if enabled
+    if dataDump:
+        # Force-stop any stale backup confirmations
         execCommand('adb -s %s shell am force-stop %s' % (serialNumber, PACKAGE_BACKUP_CONFIRM), subprocessQueue)
-        if (os.path.isfile(appDataBackup)):        
-            os.remove(appDataBackup)
 
-        print '[%s] Failed to download app data' % serialNumber
+        # Send app backup request
+        appDataBackup = '%s/%s' % (dirResults, FILENAME_APP_DATA_BACKUP)
+        pBackup = execCommand('adb -s %s backup -f %s %s' % (serialNumber, appDataBackup, packageName), subprocessQueue, '[%s] Downloading app data from device...' % serialNumber, wait=False)[0]
+
+        # Send button click to accept backup on device
+        device, serialno = ViewClient.connectToDeviceOrExit(serialno=serialNumber)
+        vc = ViewClient(device, serialno)
+        acceptButton = vc.findViewById(ID_BUTTON_BACKUP_ACCEPT)
+        if acceptButton and acceptButton.isEnabled():
+            acceptButton.touch()
+
+            # Wait for backup to complete
+            pBackup.communicate()
+
+            # Wait to prevent deadlock
+            time.sleep(1)
+
+            # Extract backed up data
+            tExtract = execCommand('dd if=%s/%s bs=1 skip=24 | python -c "import zlib, sys; sys.stdout.write(zlib.decompress(sys.stdin.read()))" | tar -xvf - -C %s' % (dirResults, FILENAME_APP_DATA_BACKUP, dirData), subprocessQueue, '[%s] Extracting app data...' % serialNumber)
+            print tExtract[1]
+            print tExtract[2]
+
+            print '[%s] App data downloaded' % serialNumber
+        else:
+            os.killpg(pBackup.pid, signal.SIGTERM)
+
+            # Clean up backup confirmation and corrupt backup file
+            execCommand('adb -s %s shell am force-stop %s' % (serialNumber, PACKAGE_BACKUP_CONFIRM), subprocessQueue)
+            if (os.path.isfile(appDataBackup)):        
+                os.remove(appDataBackup)
+
+            print '[%s] Failed to download app data' % serialNumber
+    else:
+        print '[%s] App data dump skipped' % serialNumber
 
     # Wipe app data
     execCommand('adb -s %s shell pm clear %s' % (serialNumber, packageName), subprocessQueue, '[%s] Wiping app data...' % serialNumber)
 
-def executeTestsOnDevice(apkFilename, packageName, serialNumber, subprocessQueue):
+def executeTestsOnDevice(apkFilename, packageName, serialNumber, dataDump, subprocessQueue):
     '''
     Executes all the tests on a device.
 
     @type apkFilename: str
-    @param apkFilename: The APK filename.
+    @param apkFilename: The APK filename; or None to skip installing and uninstalling of APK.
     @type packageName: str
     @param packageName: The application package name.
     @type serialNumber: str
     @param serialNumber: The serial number of the device to run the tests.
+    @type dataDump: boolean
+    @param dataDump: True to dump app data after executing each test script; or False to skip.
     @type subprocessQueue: Queue
     @param subprocessQueue: The queue to add new subprocesses to.
     '''
@@ -391,32 +400,39 @@ def executeTestsOnDevice(apkFilename, packageName, serialNumber, subprocessQueue
     dirDeviceRoot = '%s/%s-[%s]' % (DIR_TEST_SESSION, re.sub('\s+', '-', model), serialNumber)
     os.mkdir(dirDeviceRoot)
     collectDeviceProperties(serialNumber, dirDeviceRoot, subprocessQueue)
-    installApp(apkFilename, packageName, serialNumber, subprocessQueue)
+
+    if apkFilename:
+        installApp(apkFilename, packageName, serialNumber, subprocessQueue)
+
     for i in range(0, len(scripts)):
         print '[%s] Preparing test case %s of %s [%s] on %s...' % (serialNumber, i + 1, len(scripts), scripts[i], model)
-        executeTestCase(packageName, serialNumber, dirDeviceRoot, scripts[i], subprocessQueue)
-    uninstallApp(packageName, serialNumber, subprocessQueue)
+        executeTestCase(packageName, serialNumber, dirDeviceRoot, scripts[i], dataDump, subprocessQueue)
 
-def executeTestsOnDeviceInNewProcess(apkFilename, packageName, serialNumber, subprocessQueue):
+    if apkFilename:
+        uninstallApp(packageName, serialNumber, subprocessQueue)
+
+def executeTestsOnDeviceInNewProcess(apkFilename, packageName, serialNumber, dataDump, subprocessQueue):
     '''
     Executes all the tests on a device in a new process.
 
     @type apkFilename: str
-    @param apkFilename: The APK filename.
+    @param apkFilename: The APK filename; or None to skip installing and uninstalling of APK.
     @type packageName: str
     @param packageName: The application package name.
     @type serialNumber: str
     @param serialNumber: The serial number of the device to run the tests.
+    @type dataDump: boolean
+    @param dataDump: True to dump app data after executing each test script; or False to skip.
     @type subprocessQueue: Queue
     @param subprocessQueue: The queue to add new subprocesses to.
     '''
     os.setsid()
     signal.signal(signal.SIGTERM, childProcessSignalHandler)
-    executeTestsOnDevice(apkFilename, packageName, serialNumber, subprocessQueue)
+    executeTestsOnDevice(apkFilename, packageName, serialNumber, dataDump, subprocessQueue)
 
 def parseArgs(argv):
     try:
-        opts, args = getopt.getopt(argv[1:], 'hl', ['help', 'linear'])
+        opts, args = getopt.getopt(argv[1:], 'hla:d', ['help', 'linear', 'noapk=', 'nodump'])
     except getopt.GetoptError:
         usage(2)
 
@@ -426,11 +442,19 @@ def parseArgs(argv):
         elif opt in ('-l', '--linear'):
             global runLinear
             runLinear = True
+        elif opt in ('-a', '--noapk'):
+            global fromPackage
+            fromPackage = arg
+        elif opt in ('-d', '--nodump'):
+            global skipDump
+            skipDump = True
 
 def usage(exitVal=0):
     print '\nUsage:'
-    print '-h, --help      OPTIONAL    print this help and exit'
-    print '-l, --linear    OPTIONAL    run tests on one device after another'
+    print '-h, --help               OPTIONAL    print this help and exit'
+    print '-l, --linear             OPTIONAL    run tests on one device after another'
+    print '-a, --noapk <package>    OPTIONAL    disable APK installation and run tests using the pre-installed application with the specified package name'
+    print '-d, --nodump             OPTIONAL    disable app data dump after executing each test script'
     sys.exit(exitVal)
 
 
@@ -440,11 +464,16 @@ def usage(exitVal=0):
 signal.signal(signal.SIGINT, signalHandler)
 parseArgs(sys.argv)
 
-apk = findApk()
-validate(apk is not None)
+apk = None
+package = None
+if fromPackage is None:
+    apk = findApk()
+    validate(apk is not None)
 
-package = inspectApk(apk, subprocesses)
-validate(package is not None)
+    package = inspectApk(apk, subprocesses)
+    validate(package is not None)
+else:
+    package = fromPackage
 
 scripts = findScripts()
 validate(len(scripts) > 0)
@@ -458,10 +487,10 @@ validate(len(serials) > 0)
 
 if runLinear:
     for serial in serials:
-        executeTestsOnDevice(apk, package, serial, subprocesses)
+        executeTestsOnDevice(apk, package, serial, not skipDump, subprocesses)
 else:
     for serial in serials:
-        p = Process(target=executeTestsOnDeviceInNewProcess, name='yksp-%s' % serial, args=(apk, package, serial, childSubprocesses))
+        p = Process(target=executeTestsOnDeviceInNewProcess, name='yksp-%s' % serial, args=(apk, package, serial, not skipDump, childSubprocesses))
         processes.append(p)
         p.start()
 
