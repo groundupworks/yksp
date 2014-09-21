@@ -378,8 +378,10 @@ def executeTestCase(packageName, serialNumber, dirRoot, scriptFilename, dataDump
     else:
         print '[%s] App data dump skipped' % serialNumber
 
-    # Wipe app data
-    execCommand('adb -s %s shell pm clear %s' % (serialNumber, packageName), subprocessQueue, '[%s] Wiping app data...' % serialNumber)
+    # Wipe app data only if package exists, otherwise the ADB clear data command hangs
+    packageListing = execCommand('adb -s %s shell pm list packages %s' % (serialNumber, packageName), subprocessQueue)[1]
+    if packageListing:
+        execCommand('adb -s %s shell pm clear %s' % (serialNumber, packageName), subprocessQueue, '[%s] Wiping app data...' % serialNumber)
 
 def executeTestsOnDevice(apkFilename, packageName, serialNumber, dataDump, subprocessQueue):
     '''
@@ -462,29 +464,45 @@ def usage(exitVal=0):
 # Main
 #######
 signal.signal(signal.SIGINT, signalHandler)
+timeStart = time.time()
 parseArgs(sys.argv)
 
+# Find APK and package name
 apk = None
 package = None
-if fromPackage is None:
+if fromPackage:
+    package = fromPackage
+else:
     apk = findApk()
     validate(apk is not None)
 
     package = inspectApk(apk, subprocesses)
     validate(package is not None)
-else:
-    package = fromPackage
 
+# Find test scripts
 scripts = findScripts()
 validate(len(scripts) > 0)
 
+# Create directories to store test results
 if os.path.isdir(DIR_TEST_RESULTS) is False:
     os.mkdir(DIR_TEST_RESULTS)
 os.mkdir(DIR_TEST_SESSION)
 
-serials = findDevices(subprocesses)
+# Find available devices
+unverifiedSerials = findDevices(subprocesses)
+serials = []
+if fromPackage and len(unverifiedSerials) > 0:
+    print 'Verifying package %s exists on devices...' % package
+    for serial in unverifiedSerials:
+        packageListing = execCommand('adb -s %s shell pm list packages %s' % (serial, package), subprocesses)[1]
+        if packageListing:
+            serials.append(serial)
+            print 'Device %s verified' % serial
+        else:
+            print 'Device %s skipped' % serial
 validate(len(serials) > 0)
 
+# Run tests on all available devices
 if runLinear:
     for serial in serials:
         executeTestsOnDevice(apk, package, serial, not skipDump, subprocesses)
@@ -497,5 +515,10 @@ else:
     for p in processes:
         p.join()
 
-print 'All test cases completed on all devices'
+# Report completion of test session
+scriptString = '1 test script'
+if len(scripts) > 1: scriptString = 'All %s test scripts' % len(scripts)
+deviceString = '1 device'
+if len(serials) > 1: deviceString = '%s devices' % len(serials)
+print '%s executed on %s in %s seconds' % (scriptString, deviceString, int(time.time() - timeStart))
 

@@ -68,7 +68,12 @@ class YkspTestCase(unittest.TestCase):
         '''
         if package is None:
             package = YkspTestCase.package
-        self.device.startActivity('%s/.%s' % (package, activity))
+
+        component = '%s/.%s' % (package, activity)
+        try:
+            self.device.startActivity(component)
+        except RuntimeError:
+            self.fail('Failed to start %s' % component)
 
     def saveScreen(self, tag=None, sleep=0):
         '''
