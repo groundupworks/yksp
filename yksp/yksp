@@ -160,15 +160,14 @@ def execCommand(cmd, subprocessQueue, msg=None, wait=True):
     '''
     if msg:
         print msg
+
+    # Attach session id to use process group for terminating child process
+    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
+    subprocessQueue.put(p)
     if wait:
-        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        subprocessQueue.put(p)
         stdData = p.communicate()
         returnData = (p, stdData[0], stdData[1])
     else:
-        # Attach session id to use process group for terminating child process
-        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
-        subprocessQueue.put(p)
         returnData = (p, None, None)
     return returnData
 
