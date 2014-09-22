@@ -1,0 +1,3 @@
+[submodule "AndroidViewClient"]
+	path = AndroidViewClient
+	url = git://github.com/dtmilano/AndroidViewClient.git
