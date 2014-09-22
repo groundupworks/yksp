@@ -379,8 +379,8 @@ def executeTestCase(packageName, serialNumber, dirRoot, scriptFilename, dataDump
         print '[%s] App data dump skipped' % serialNumber
 
     # Wipe app data only if package exists, otherwise the ADB clear data command hangs
-    packageListing = execCommand('adb -s %s shell pm list packages %s' % (serialNumber, packageName), subprocessQueue)[1]
-    if packageListing:
+    packagePath = execCommand('adb -s %s shell pm path %s' % (serialNumber, packageName), subprocessQueue)[1]
+    if packagePath:
         execCommand('adb -s %s shell pm clear %s' % (serialNumber, packageName), subprocessQueue, '[%s] Wiping app data...' % serialNumber)
 
 def executeTestsOnDevice(apkFilename, packageName, serialNumber, dataDump, subprocessQueue):
@@ -494,8 +494,8 @@ serials = []
 if fromPackage and len(unverifiedSerials) > 0:
     print 'Verifying package %s exists on devices...' % package
     for serial in unverifiedSerials:
-        packageListing = execCommand('adb -s %s shell pm list packages %s' % (serial, package), subprocesses)[1]
-        if packageListing:
+        packagePath = execCommand('adb -s %s shell pm path %s' % (serial, package), subprocesses)[1]
+        if packagePath:
             serials.append(serial)
             print 'Device %s verified' % serial
         else:
