@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>yksp by benhylau</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">yksp</h1>
+        <p class="header">let &#39;em test &#39;emselves</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/benhylau/yksp/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/benhylau/yksp/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/benhylau/yksp">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/benhylau">benhylau</a></p>
+
+
+      </header>
+      <section>
+        <p>// TODO</p>
+
+<h2>
+<a name="getting-set-up" class="anchor" href="#getting-set-up"><span class="octicon octicon-link"></span></a>Getting set up</h2>
+
+<p>This assumes your environment has <code>python</code>, <code>easy_install</code> and <code>git</code>. You may confirm each installation by typing the following commands in your Terminal.</p>
+
+<pre><code>$ which python
+$ which easy_install
+$ which git
+</code></pre>
+
+<h3>
+<a name="step-one" class="anchor" href="#step-one"><span class="octicon octicon-link"></span></a>step one</h3>
+
+<p>You may skip this step if you already have the <strong>Android SDK</strong> installed.</p>
+
+<p>Download the <a href="http://developer.android.com/sdk/index.html">Android SDK</a>. You may download the stand-alone package for your platform instead of the IDE bundles. After extracting the package, you need to download the following tools, as they are not included in the SDK package.</p>
+
+<ol>
+<li>Android SDK Tools</li>
+<li>Android SDK Platform-tools</li>
+<li>Android SDK Build-tools</li>
+</ol><p>You will download these tools by using yet another tool, which is included in the SDK package. Replace <code>android-sdk-root</code> with the local path to your extracted SDK root directory.</p>
+
+<pre><code>$ cd android-sdk-root/tools
+$ android list sdk --all
+$ android update sdk --no-ui --all --filter 1,2,3
+</code></pre>
+
+<h3>
+<a name="step-two" class="anchor" href="#step-two"><span class="octicon octicon-link"></span></a>step two</h3>
+
+<p>Install the <strong>Python Imagineg Library</strong> and <strong>AndroidViewClient</strong> by <a href="https://github.com/dtmilano" class="user-mention">@dtmilano</a>.</p>
+
+<pre><code>$ sudo easy_install --upgrade --find-links http://www.pythonware.com/products/pil/ Imaging
+$ sudo easy_install --upgrade androidviewclient
+</code></pre>
+
+<h3>
+<a name="step-three" class="anchor" href="#step-three"><span class="octicon octicon-link"></span></a>step three</h3>
+
+<p>Clone the <strong>yksp</strong> repo, and <strong>AndroidViewClient</strong> as a submodule.</p>
+
+<pre><code>$ git clone git://github.com/benhylau/yksp.git
+$ git submodule init
+$ git submodule update
+</code></pre>
+
+<h3>
+<a name="step-four" class="anchor" href="#step-four"><span class="octicon octicon-link"></span></a>step four</h3>
+
+<p>Set the environment variable <code>$YKSP_HOME</code>, and also <code>$ANDROID_HOME</code> if not already set. Then configure your <code>$PATH</code>.</p>
+
+<p>On a Mac</p>
+
+<pre><code>$ sudo nano ~/.bash_profile
+</code></pre>
+
+<p>On Ubuntu</p>
+
+<pre><code>$ sudo nano /etc/profile.d/yksp.sh
+</code></pre>
+
+<p>Add the following text, replacing <code>android-sdk-root</code>, <code>yksp-root</code>, and <code>build-tools-version</code> with your local paths. Log out and log back in.</p>
+
+<pre><code>export ANDROID_HOME=android-sdk-root
+export YKSP_HOME=yksp-root/yksp
+export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/build-tools-version:$YKSP_HOME
+</code></pre>
+
+<p>And... you're all set!</p>
+
+<h2>
+<a name="running-the-example" class="anchor" href="#running-the-example"><span class="octicon octicon-link"></span></a>Running the example</h2>
+
+<p>The yksp repo has an <code>examples/flying-photo-booth-tests</code> folder, containing the <a href="https://play.google.com/store/apps/details?id=com.groundupworks.flyingphotobooth">Flying PhotoBooth</a> APK, along with its PyUnit test scripts in a <code>scripts</code> folder. Connect one or more Android devices to your computer, and this is all you need to run a typical yksp test session.</p>
+
+<pre><code>$ cd $YKSP_HOME/../examples/flying-photo-booth-tests
+$ yksp
+</code></pre>
+
+<p>Oberserve the test session logs in your Terminal. Results are stored in the newly created <code>results</code> folder, with each test session in a folder named with its own timestamp.</p>
+
+<h3>
+<a name="what-just-happened" class="anchor" href="#what-just-happened"><span class="octicon octicon-link"></span></a>what just happened?</h3>
+
+<p>// TODO</p>
+
+<h3>
+<a name="where-are-my-results" class="anchor" href="#where-are-my-results"><span class="octicon octicon-link"></span></a>where are my results?</h3>
+
+<p>// TODO</p>
+
+<h2>
+<a name="creating-test-scripts" class="anchor" href="#creating-test-scripts"><span class="octicon octicon-link"></span></a>Creating test scripts</h2>
+
+<p>Test scripts define subclasses of <code>YkspTestCase</code> based on the <a href="https://wiki.python.org/moin/PyUnit">PyUnit</a> framework. You will define and implement one or more methods with names starting with <code>test</code>, like such <code>def testSomething(self):</code>. To figure out what goes in the implementation, a good way to start is to look at <a href="https://github.com/benhylau/yksp/blob/master/examples/flying-photo-booth-tests/scripts/testCapture.py">testCapture.py</a> and <a href="https://github.com/benhylau/yksp/blob/master/examples/flying-photo-booth-tests/scripts/testAbandonLinking.py">testAbandonLinking.py</a> in <code>examples/flying-photo-booth-tests/scripts</code>.</p>
+
+<p>From the examples, you will find that the <code>YkspTestCase</code> class provides the following convenience methods, documented <a href="https://github.com/benhylau/yksp/blob/master/yksp/yksptestcase.py">here</a>.</p>
+
+<div class="highlight highlight-python"><pre><span class="n">launchApp</span><span class="p">(</span><span class="n">package</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<span class="n">refreshScreen</span><span class="p">(</span><span class="n">sleep</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">saveScreen</span><span class="p">(</span><span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<p>It is important that <code>refreshScreen()</code> or <code>saveScreen()</code> be called after each screen transition on your device, in order for the test to pick up the updated view tree.</p>
+
+<p>To send UI events to your device, we rely on <a href="https://github.com/dtmilano/AndroidViewClient">AndroidViewClient</a> by <a href="https://github.com/dtmilano" class="user-mention">@dtmilano</a>. You have already downloaded the documentaion to here <code>$YKSP_HOME/../AndroidViewClient/AndroidViewClient/doc</code> as part of the submodule.</p>
+
+<p>To pass or fail test cases, aside from visual inspection of screenshots, we mostly rely on exceptions raised by the <code>findView...()</code> methods from AndroidViewClient, as well as the family of <code>assert...()</code> methods available through the PyUnit framework.</p>
+
+<p>When writing test scripts, while you can find certain views by text sometimes, you will encounter UI elements like an image button, which you need to identify by a unique ID in the view tree. This is when the <code>dump</code> tool in AndroidViewClient becomes handy. Just manually navigate to the screen on your connected device, then type that in Terminal and pick out the ID you need from the view tree.</p>
+
+<pre><code>$ dump
+android.widget.FrameLayout id/no_id/1 
+   android.widget.LinearLayout id/no_id/2 
+      android.widget.FrameLayout id/no_id/3 
+         android.widget.FrameLayout id/no_id/4 
+            android.widget.FrameLayout id/no_id/5 
+               android.widget.FrameLayout id/no_id/6 
+                  android.widget.LinearLayout id/no_id/7 
+                     android.widget.RelativeLayout id/no_id/8 
+                        android.widget.TextView id/no_id/9 PHOTO 1 OF 2
+                        android.widget.ImageButton id/no_id/10 
+                        android.widget.ImageButton id/no_id/11 
+                     android.widget.RelativeLayout id/no_id/12 
+                        android.view.View id/no_id/13 
+                           android.view.View id/no_id/14 
+                           android.view.View id/no_id/15 
+                           android.view.View id/no_id/16 
+                        android.widget.Button id/no_id/17 CAPTURE
+</code></pre>
+
+<p>Lastly, it is important to remember that while an app data wipe is performed before and after running each test script to remove the persistent data stored, that is not the case in between test methods within the same script. Instead, the app is killed between test methods, which means in-memory states are destroyed, but disk-persisted states are carried across. For each test to have a true 'fresh start', it is recommended that you separate out your tests into different files, with only a single test method in each <code>YkspTestCase</code> subclass.</p>
+
+<p>After all that, here is a template to get you started!</p>
+
+<div class="highlight highlight-python"><pre><span class="c">#! /usr/bin/env python</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'ANDROID_VIEW_CLIENT_HOME'</span><span class="p">],</span> <span class="s">'src'</span><span class="p">))</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="kn">from</span> <span class="nn">com.dtmilano.android.viewclient</span> <span class="kn">import</span> <span class="n">ViewNotFoundException</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'YKSP_HOME'</span><span class="p">])</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="kn">from</span> <span class="nn">yksptestcase</span> <span class="kn">import</span> <span class="n">YkspTestCase</span>
+
+<span class="k">class</span> <span class="nc">MyTestCase</span><span class="p">(</span><span class="n">YkspTestCase</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">testSomething</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">'''</span>
+<span class="sd">        Tests something... like geese, mustard, cabbages and kings.</span>
+<span class="sd">        '''</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">launchApp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveScreen</span><span class="p">(</span><span class="s">'my-start-screen'</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c"># Your implementation...</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">YkspTestCase</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+</pre></div>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
