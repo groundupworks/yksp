@@ -33,13 +33,10 @@ except:
 
 from yksptestcase import YkspTestCase
 
-TEXT_BEFORE_CAPTURE = 'PHOTO 1 OF 2'
-
-TEXT_AFTER_CAPTURE = 'PHOTO 2 OF 2'
-
-TEXT_AFTER_DISCARD = 'PHOTO 1 OF 2'
-
 TEXT_CAPTURE_BUTTON = 'CAPTURE'
+TEXT_BEFORE_CAPTURE = 'PHOTO 1 OF 2'
+TEXT_AFTER_CAPTURE = 'PHOTO 2 OF 2'
+TEXT_AFTER_DISCARD = TEXT_BEFORE_CAPTURE
 
 class CaptureTestCase(YkspTestCase):
 
@@ -96,6 +93,7 @@ class CaptureTestCase(YkspTestCase):
 
         # Find the view containing the text 'PHOTO 1 OF 2' to validate successful discard
         self.vc.findViewWithTextOrRaise(TEXT_AFTER_DISCARD)
+
 
 if __name__ == '__main__':
     YkspTestCase.main(sys.argv)

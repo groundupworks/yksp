@@ -66,7 +66,12 @@ class YkspTestCase(unittest.TestCase):
         '''
         if package is None:
             package = YkspTestCase.package
-        self.device.shell('monkey -p %s -c android.intent.category.LAUNCHER 1' % package)
+
+        # Launch application only if the package is installed
+        if self.device.shell('pm path %s' % package):
+            self.device.shell('monkey -p %s -c android.intent.category.LAUNCHER 1' % package)
+        else:
+            self.fail('Failed to launch application. %s is not installed on this device' % package)
 
     def refreshScreen(self, sleep=1):
         '''
