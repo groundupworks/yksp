@@ -268,9 +268,9 @@ def collectDeviceProperties(serialNumber, dirRoot, subprocessQueue):
     @type subprocessQueue: Queue
     @param subprocessQueue: The queue to add new subprocesses to.
     '''
-    execCommand('adb -s %s shell getprop > %s/%s/%s' % (serialNumber, DIR_TEST_SESSION, serialNumber, FILENAME_DEVICE_PROPERTIES), subprocessQueue, '[%s] Collecting device properties...' % serialNumber)
-    stdoutBackup = execCommand('grep ro.product.manufacturer %s/%s; grep ro.product.model %s/%s; grep ro.build.version.sdk %s/%s' % (DIR_TEST_SESSION, FILENAME_DEVICE_PROPERTIES, DIR_TEST_SESSION, FILENAME_DEVICE_PROPERTIES, DIR_TEST_SESSION, FILENAME_DEVICE_PROPERTIES), subprocessQueue)[1]
-    print stdoutBackup
+    execCommand('adb -s %s shell getprop > %s/%s' % (serialNumber, dirRoot, FILENAME_DEVICE_PROPERTIES), subprocessQueue, '[%s] Collecting device properties...' % serialNumber)
+    properties = execCommand('grep ro.product.manufacturer %s/%s | while read line; do echo "[%s] $line"; done; grep ro.product.model %s/%s | while read line; do echo "[%s] $line"; done; grep ro.build.version.sdk %s/%s | while read line; do echo "[%s] $line"; done; ' % (dirRoot, FILENAME_DEVICE_PROPERTIES, serialNumber, dirRoot, FILENAME_DEVICE_PROPERTIES, serialNumber, dirRoot, FILENAME_DEVICE_PROPERTIES, serialNumber), subprocessQueue)[1]
+    print properties
 
 def installApp(apkFilename, packageName, serialNumber, subprocessQueue):
     '''
