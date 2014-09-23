@@ -300,6 +300,22 @@ def uninstallApp(packageName, serialNumber, subprocessQueue):
     '''
     execCommand('adb -s %s uninstall %s' % (serialNumber, packageName), subprocessQueue, '[%s] Uninstalling application...' % serialNumber)
 
+def wipeAppData(packageName, serialNumber, subprocessQueue):
+    '''
+    Wipes app data on device.
+
+    @type packageName: str
+    @param packageName: The application package name.
+    @type serialNumber: str
+    @param serialNumber: The serial number of the device to run the tests.
+    @type subprocessQueue: Queue
+    @param subprocessQueue: The queue to add new subprocesses to.
+    '''
+    # Wipe only if package exists, otherwise the ADB clear data command hangs
+    packagePath = execCommand('adb -s %s shell pm path %s' % (serialNumber, packageName), subprocessQueue)[1]
+    if packagePath:
+        execCommand('adb -s %s shell pm clear %s' % (serialNumber, packageName), subprocessQueue, '[%s] Wiping app data...' % serialNumber)
+
 def executeTestCase(packageName, serialNumber, dirRoot, scriptFilename, dataDump, subprocessQueue):
     '''
     Executes a test script and performs all logging and clean-up associated with running the test case.
@@ -325,6 +341,9 @@ def executeTestCase(packageName, serialNumber, dirRoot, scriptFilename, dataDump
     
     # Make a local copy of the test script
     shutil.copy('%s/%s' % (DIR_TEST_SCRIPTS, scriptFilename), dirResults)
+
+    # Wipe app data
+    wipeAppData(packageName, serialNumber, subprocessQueue)
 
     # Start logcat
     execCommand('adb -s %s logcat -c' % serialNumber, subprocessQueue, '[%s] Clearing logcat buffer...' % serialNumber)
@@ -378,10 +397,9 @@ def executeTestCase(packageName, serialNumber, dirRoot, scriptFilename, dataDump
     else:
         print '[%s] App data dump skipped' % serialNumber
 
-    # Wipe app data only if package exists, otherwise the ADB clear data command hangs
-    packagePath = execCommand('adb -s %s shell pm path %s' % (serialNumber, packageName), subprocessQueue)[1]
-    if packagePath:
-        execCommand('adb -s %s shell pm clear %s' % (serialNumber, packageName), subprocessQueue, '[%s] Wiping app data...' % serialNumber)
+    # Wipe app data
+    wipeAppData(packageName, serialNumber, subprocessQueue)
+
 
 def executeTestsOnDevice(apkFilename, packageName, serialNumber, dataDump, subprocessQueue):
     '''
