@@ -51,38 +51,40 @@ class YkspTestCase(unittest.TestCase):
         self.device.wake()
 
         # Create ViewClient instance
-        self.vc = ViewClient(self.device, self.serialno)
+        self.vc = ViewClient(self.device, self.serialno, autodump=False)
 
     def tearDown(self):
         # Force-stop the app
         self.device.shell('am force-stop %s' % YkspTestCase.package)
 
-    def startActivity(self, activity, package=None):
+    def launchApp(self, package=None):
         '''
-        Starts an Activity.
+        Launches an app as if from the launcher.
 
-        @type activity: str
-        @param activity: The name of the Android Activity.
         @type package: str
-        @param package: An optional parameter to indicate the package name of the Activity. If not provided, the application package name specified in the application manifest is used.
+        @param package: An optional parameter to specify an application to launch by its package name. If not provided, the application package name provided in the application manifest is used.
         '''
         if package is None:
             package = YkspTestCase.package
+        self.device.shell('monkey -p %s -c android.intent.category.LAUNCHER 1' % package)
 
-        component = '%s/.%s' % (package, activity)
-        try:
-            self.device.startActivity(component)
-        except RuntimeError:
-            self.fail('Failed to start %s' % component)
-
-    def saveScreen(self, tag=None, sleep=0):
+    def refreshScreen(self, sleep=1):
         '''
-        Saves to disk the screenshot and screendump of the device screen.
+        Updates the view tree. This method or saveScreen() must be called after each screen transition to keep the view tree in sync with the device screen.
+
+        @type sleep: float
+        @param sleep: An optional parameter to indicate the time to sleep before refreshing the screen. Defaults to one second.
+        '''
+        self.vc.dump(window=-1, sleep=sleep)
+
+    def saveScreen(self, tag=None, sleep=1):
+        '''
+        Updates the view tree and saves to disk the screenshot and screendump of the device screen. This method or refreshScreen() must be called after each screen transition to keep the view tree in sync with the device screen.
 
         @type tag: str
-        @param tag: The tag for this screen. This is appended to the filenames.
+        @param tag: The tag for this screen. This is appended to the filename.
         @type sleep: float
-        @param sleep: An optional parameter to indicate the time to sleep before saving the screen. Defaults to zero.
+        @param sleep: An optional parameter to indicate the time to sleep before saving the screen. Defaults to one second.
         '''
         if sleep > 0:
             self.vc.sleep(sleep)
