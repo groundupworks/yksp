@@ -117,23 +117,148 @@ export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME
 <h2>
 <a name="running-the-example" class="anchor" href="#running-the-example"><span class="octicon octicon-link"></span></a>Running the example</h2>
 
-<p>The yksp repo has an <code>examples/flying-photo-booth-tests</code> folder, containing the <a href="https://play.google.com/store/apps/details?id=com.groundupworks.flyingphotobooth">Flying PhotoBooth</a> APK, along with its PyUnit test scripts in a <code>scripts</code> folder. Connect one or more Android devices to your computer, and this is all you need to run a typical yksp test session.</p>
+<p>The yksp repo has an <code>examples/flying-photo-booth-tests</code> folder, containing the <a href="https://play.google.com/store/apps/details?id=com.groundupworks.flyingphotobooth">Flying PhotoBooth</a> APK, along with its PyUnit test scripts in a <code>scripts</code> folder. Connect one or more Android devices to your computer. Ensure that the device is made USB debuggable and screen lock is disabled (like, completely off... not even Swipe Unlock). This is how you would run a typical yksp test session.</p>
 
 <pre><code>$ cd $YKSP_HOME/../examples/flying-photo-booth-tests
 $ yksp
 </code></pre>
 
-<p>Oberserve the test session logs in your Terminal. Results are stored in the newly created <code>results</code> folder, with each test session in a folder named with its own timestamp.</p>
+<p>Oberserve the test session logs in your Terminal, it should look as follow if everything is set up properly. Results are stored in the newly created <code>results</code> folder, with each test session in a folder named with its own timestamp.</p>
+
+<pre><code>$ yksp
+Scanning for APK...
+APK: flying-photo-booth-release.apk
+Inspecting APK...
+Package name: com.groundupworks.flyingphotobooth
+Version name: 3.4
+Version code: 13
+Scanning for test scripts...
+Script 1: testAbandonLinking.py
+Script 2: testCapture.py
+Listing devices...
+Device 1: EP7309229R
+[EP7309229R] Collecting device properties...
+[EP7309229R] [ro.product.manufacturer]: [Sony]
+[EP7309229R] [ro.product.model]: [C6502]
+[EP7309229R] [ro.build.version.sdk]: [16]
+
+[EP7309229R] Installing APK...
+[EP7309229R] Preparing test case 1 of 2 [testAbandonLinking.py] on C6502...
+[EP7309229R] Wiping app data...
+[EP7309229R] Clearing logcat buffer...
+[EP7309229R] Start printing logcat output to file...
+[EP7309229R] Executing [testAbandonLinking.py] with command:
+python results/2014-09-24-09-34-28/C6502-[EP7309229R]/testAbandonLinking/testAbandonLinking.py --package com.groundupworks.flyingphotobooth --serial EP7309229R --root results/2014-09-24-09-34-28/C6502-[EP7309229R]/testAbandonLinking --logs pyunit.txt --screenshots screenshots --screendumps screendumps
+[EP7309229R] Logcat output saved
+[EP7309229R] Downloading app data from device...
+[EP7309229R] Extracting app data...
+
+1947+0 records in
+1947+0 records out
+1947 bytes transferred in 0.002251 secs (864984 bytes/sec)
+x apps/com.groundupworks.flyingphotobooth/_manifest
+x apps/com.groundupworks.flyingphotobooth/db/webviewCookiesChromiumPrivate.db
+x apps/com.groundupworks.flyingphotobooth/db/wings.db-journal
+x apps/com.groundupworks.flyingphotobooth/db/wings.db
+x apps/com.groundupworks.flyingphotobooth/db/webviewCookiesChromium.db
+x apps/com.groundupworks.flyingphotobooth/sp/com.facebook.SharedPreferencesTokenCachingStrategy.DEFAULT_KEY.xml
+x apps/com.groundupworks.flyingphotobooth/sp/com.groundupworks.flyingphotobooth_preferences.xml
+
+[EP7309229R] App data downloaded
+[EP7309229R] Wiping app data...
+[EP7309229R] Preparing test case 2 of 2 [testCapture.py] on C6502...
+[EP7309229R] Wiping app data...
+[EP7309229R] Clearing logcat buffer...
+[EP7309229R] Start printing logcat output to file...
+[EP7309229R] Executing [testCapture.py] with command:
+python results/2014-09-24-09-34-28/C6502-[EP7309229R]/testCapture/testCapture.py --package com.groundupworks.flyingphotobooth --serial EP7309229R --root results/2014-09-24-09-34-28/C6502-[EP7309229R]/testCapture --logs pyunit.txt --screenshots screenshots --screendumps screendumps
+[EP7309229R] Logcat output saved
+[EP7309229R] Downloading app data from device...
+[EP7309229R] Extracting app data...
+
+567+0 records in
+567+0 records out
+567 bytes transferred in 0.000659 secs (860409 bytes/sec)
+x apps/com.groundupworks.flyingphotobooth/_manifest
+
+[EP7309229R] App data downloaded
+[EP7309229R] Wiping app data...
+[EP7309229R] Uninstalling application...
+All 2 test scripts executed on 1 device in 93 seconds
+</code></pre>
 
 <h3>
 <a name="what-just-happened" class="anchor" href="#what-just-happened"><span class="octicon octicon-link"></span></a>what just happened?</h3>
 
-<p>// TODO</p>
+<p>The test session logs should give a pretty good idea of what yksp is doing, but here is a better view.</p>
+
+<pre><code>Find APK from your root directory
+Find test scripts from the scripts folder
+Find connected devices and write serials to serials.txt
+For each device, run in parallel:
+    Collect device properties and write to device.txt
+    Install APK
+    For each test script:
+        Make a local copy of the test script
+        Wipe app data
+        Start logcat
+        Execute local copy of the test script:
+            Connect to and wake device in YkspTestCase.setUp()
+            Run each test...() method in your YkspTestCase subclass:
+                For each YkspTestCase.saveScreen() call:
+                    Save screenshot to the screenshots folder
+                    Save view tree dump to screendumps folder 
+            Kill app in YkspTestCase.tearDown()
+            Write PyUnit test results to pyunit.txt
+        Stop logcat and write to logcat.txt
+        Dump app data to data.ab
+        Extract data.ab to data folder
+        Wipe app data
+    Uninstall application
+Report completion of test session
+</code></pre>
 
 <h3>
 <a name="where-are-my-results" class="anchor" href="#where-are-my-results"><span class="octicon octicon-link"></span></a>where are my results?</h3>
 
-<p>// TODO</p>
+<p>Test results are organized in a directory structure that would allow a script to easily walk the tree and generate reports from a data set involving multiple devices and test sessions.</p>
+
+<pre><code>results
+    &lt;DATETIME&gt;
+        serials.txt
+        SERIAL-[MODEL]
+            device.txt
+            SCRIPT1
+                SCRIPT1.py
+                pyunit.txt
+                logcat.txt
+                data.ab
+                data
+                    ...
+                screenshots
+                    0-tag0.png
+                    1-tag1.png
+                    2-tag2.png                    
+                screendumps            
+                    0-tag0.txt
+                    1-tag1.txt
+                    2-tag2.txt
+            SCRIPT2
+                SCRIPT2.py
+                pyunit.txt
+                logcat.txt
+                data.ab
+                data
+                    ...
+                screenshots
+                    0-tag0.png
+                    1-tag1.png
+                    2-tag2.png
+                screendumps
+                    0-tag0.txt
+                    1-tag1.txt
+                    2-tag2.txt
+</code></pre>
 
 <h2>
 <a name="creating-test-scripts" class="anchor" href="#creating-test-scripts"><span class="octicon octicon-link"></span></a>Creating test scripts</h2>
@@ -239,10 +364,10 @@ Usage:
 
 <p>This option allows launching off a pre-installed application, specified by its package name. No APK needs to be provided, and yksp will ignore any APK in your directory and skip installation (and uninstallation) altogether. A verification step is performed on each connected device to verify that the application is already installed, and the test scripts will be executed only on the subset of devices that are verified.</p>
 
-<p>This option is useful for integrating yksp with your IDE for development. In Android Studio, you can have your <strong>Run Configurations</strong> deploy the APK but not launch any Activity, and instead launch an external tool with the following configurations, where <code>some-directory</code> is any directory containing a <code>scripts</code> folder containing your test scripts.</p>
+<p>This option is useful for integrating yksp with your IDE for development. In Android Studio, you can have your <strong>Run Configurations</strong> deploy the APK but not launch any Activity, and instead launch an external tool with the following configurations, where <code>com.groundupworks.flyingphotobooth</code> is replaced by the package name of your app, and <code>some-directory</code> is any directory containing a <code>scripts</code> folder containing your test scripts.</p>
 
 <pre><code>Program:           yksp
-Parameters:        --noapk com.quickplay
+Parameters:        --noapk com.groundupworks.flyingphotobooth
 Working directory: some-directory
 </code></pre>
 
