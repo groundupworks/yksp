@@ -30,9 +30,18 @@
 
       </header>
       <section>
-        <p>// TODO</p>
+        <p>A fully Python-based tool that helps you automate Android UI testing and captures everything you need from each test session.</p>
 
-<h2>
+<ul>
+<li>Generation of UI events independent of device screen sizes</li>
+<li>Validation of UI elements with PyUnit assertions</li>
+<li>Screenshots and dumps of their matching view tree</li>
+<li>Logcat output for the duration of each test</li>
+<li>App data dump after each test, including preferences and databases</li>
+<li>Backup file that can be used to restore your device state after each test</li>
+<li>Executing tests on all connected device in parallel</li>
+<li>Device properties dump, including the device model and installed Android version</li>
+</ul><h2>
 <a name="getting-set-up" class="anchor" href="#getting-set-up"><span class="octicon octicon-link"></span></a>Getting set up</h2>
 
 <p>This assumes your environment has <code>python</code>, <code>easy_install</code> and <code>git</code>. You may confirm each installation by typing the following commands in your Terminal.</p>
@@ -138,7 +147,7 @@ $ yksp
 
 <p>It is important that <code>refreshScreen()</code> or <code>saveScreen()</code> be called after each screen transition on your device, in order for the test to pick up the updated view tree.</p>
 
-<p>To send UI events to your device, we rely on <a href="https://github.com/dtmilano/AndroidViewClient">AndroidViewClient</a> by <a href="https://github.com/dtmilano" class="user-mention">@dtmilano</a>. You have already downloaded the documentaion to here <code>$YKSP_HOME/../AndroidViewClient/AndroidViewClient/doc</code> as part of the submodule.</p>
+<p>To send UI events to your device, we rely on <a href="https://github.com/dtmilano/AndroidViewClient">AndroidViewClient</a> by <a href="https://github.com/dtmilano" class="user-mention">@dtmilano</a>. You have already downloaded the documentaion to here <code>$YKSP_HOME/../AndroidViewClient/AndroidViewClient/doc/index.html</code> as part of the submodule.</p>
 
 <p>To pass or fail test cases, aside from visual inspection of screenshots, we mostly rely on exceptions raised by the <code>findView...()</code> methods from AndroidViewClient, as well as the family of <code>assert...()</code> methods available through the PyUnit framework.</p>
 
@@ -201,6 +210,77 @@ android.widget.FrameLayout id/no_id/1
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">YkspTestCase</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
 </pre></div>
+
+<h2>
+<a name="run-options" class="anchor" href="#run-options"><span class="octicon octicon-link"></span></a>Run options</h2>
+
+<p>yksp has run options to support various use cases. You can see those by entering the following in your Terminal. </p>
+
+<pre><code>$ yksp --help
+
+Usage:
+-h, --help               OPTIONAL    print this help and exit
+-l, --linear             OPTIONAL    run tests on one device after another
+-a, --noapk &lt;package&gt;    OPTIONAL    disable APK installation and run tests using the pre-installed application with the specified package name
+-d, --nodump             OPTIONAL    disable app data dump after executing each test script
+</code></pre>
+
+<h3>
+<a name="--linear" class="anchor" href="#--linear"><span class="octicon octicon-link"></span></a>--linear</h3>
+
+<p>By default, yksp spawns multiple processes to execute test scripts on all connected devices in parallel. You may force yksp to run the scripts on one device after another using this flag. It is useful when debugging your test scripts, since the test logs in your Terminal will look cleaner.</p>
+
+<p>Note that this does not imply everything is executed in a single process, as yksp uses multiple processes to do everything it needs to do even for a single device.</p>
+
+<h3>
+<a name="--noapk" class="anchor" href="#--noapk"><span class="octicon octicon-link"></span></a>--noapk</h3>
+
+<p>This option allows launching off a pre-installed application, specified by its package name. No APK needs to be provided, and yksp will ignore any APK in your directory and skip installation (and uninstallation) altogether. A verification step is performed on each connected device to verify that the application is already installed, and the test scripts will be executed only on the subset of devices that are verified.</p>
+
+<p>This option is useful for integrating yksp with your IDE for development. In Android Studio, you can have your <strong>Run Configurations</strong> deploy the APK but not launch any Activity, and instead launch an external tool with the following configurations, where <code>some-directory</code> is any directory containing a <code>scripts</code> folder containing your test scripts.</p>
+
+<pre><code>Program:           yksp
+Parameters:        --noapk com.quickplay
+Working directory: some-directory
+</code></pre>
+
+<h3>
+<a name="--nodump" class="anchor" href="#--nodump"><span class="octicon octicon-link"></span></a>--nodump</h3>
+
+<p>After executing each test script, yksp utilizes the <code>adb backup</code> command to generate the backup file <code>data.ab</code>. The file itself can be used to restore the device state, as it contains all the locally persisted app data, including preferences and databases. yksp also extracts the file into the <code>data</code> folder, which you can conveniently use to validate the state changes as a result of the test script.</p>
+
+<p>Note that if the application manifest has <code>android:allowBackup="false"</code>, a <code>data.ab</code> file will be dumped out containing nothing. This is the correct behaviour and the absence of files in the extracted folder can be used to validate this.</p>
+
+<p>The data dump is usually fast, but can optionally be disabled with this flag.</p>
+
+<h2>
+<a name="mildly-faq" class="anchor" href="#mildly-faq"><span class="octicon octicon-link"></span></a>Mildly-faq</h2>
+
+<h4>
+<a name="q-can-my-pyunit-test-script-mock-out-components-in-my-application-as-part-of-the-test" class="anchor" href="#q-can-my-pyunit-test-script-mock-out-components-in-my-application-as-part-of-the-test"><span class="octicon octicon-link"></span></a>
+<strong>Q:</strong> Can my PyUnit test script mock out components in my application as part of the test?</h4>
+
+<p><strong>A:</strong> The short answer is no. yksp tests an APK, or a pre-installed app, as is. It cannot inject classes into your application, or switch up any build-time configurations. It doesn't mock parts of your application; it mocks you. One way around this limitation is to build the mock components into your APK, make the build-time configurations into run-time configurations, then use UI toggles or a special launch Intent to invoke a code path utilizing the mock components.</p>
+
+<h4>
+<a name="q-how-can-i-pass-or-fail-my-tests-based-on-user-generated-events-that-dont-result-in-ui-implications" class="anchor" href="#q-how-can-i-pass-or-fail-my-tests-based-on-user-generated-events-that-dont-result-in-ui-implications"><span class="octicon octicon-link"></span></a>
+<strong>Q:</strong> How can I pass or fail my tests based on user generated events that don't result in UI implications?</h4>
+
+<p><strong>A:</strong> Again, yksp mocks out the user. Within the PyUnit test method, this mock user can generate events as input, and inspect the UI elements to validate the visible part of the output. However, input events can also result in output not  immediately visible through the UI, such as a state change:</p>
+
+<ul>
+<li>of an in-memory variable</li>
+<li>in locally persisted preferences or databases</li>
+<li>on a remote server</li>
+</ul><p>The first one is irrelevant, unless there is a way to confirm it through the UI. If a human is to validate the second and third cases, it would be via a database dump, check some server state via a server API call, or in some cases, inspection of the logcat output may be sufficient. Although it is possible to do all of the above within the test case itself and do assertion, using regular Python and adb commands, the recommended way is to use the PyUnit assertions to validate only the UI.</p>
+
+<p>Since yksp dumps out the locally persisted app data and the logcat output after running each test script, just make use of those! Look at the results of the many test sessions as your data set, of which the PyUnit results is only one of the many components. You can write scripts to validate state changes, compare view trees and generate image similarity indices, correlate results across different devices and test sessions, and generate reports that are more comprehensive and meaningful.</p>
+
+<h4>
+<a name="q-why-is-the-name-weird" class="anchor" href="#q-why-is-the-name-weird"><span class="octicon octicon-link"></span></a>
+<strong>Q:</strong> Why is the name weird?</h4>
+
+<p><strong>A:</strong> Maybe because it consists entirely of consonants? Although the <em>y</em> is debatable.</p>
       </section>
       <footer>
         <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
