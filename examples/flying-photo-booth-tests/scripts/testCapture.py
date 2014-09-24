@@ -17,7 +17,6 @@ limitations under the License.
 
 import sys
 import os
-import unittest
 
 try:
     sys.path.append(os.path.join(os.environ['ANDROID_VIEW_CLIENT_HOME'], 'src'))
