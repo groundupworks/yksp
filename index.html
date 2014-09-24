@@ -38,10 +38,12 @@
 <li>Screenshots and dumps of their matching view tree</li>
 <li>Logcat output for the duration of each test</li>
 <li>App data dump after each test, including preferences and databases</li>
-<li>Backup file that can be used to restore your device state after each test</li>
-<li>Executing tests on all connected device in parallel</li>
+<li>Backup file that can be used to restore your device state from each test</li>
+<li>Execution of tests on all connected devices in parallel</li>
 <li>Device properties dump, including the device model and installed Android version</li>
-</ul><h2>
+</ul><p>Higher abstractions of UI interactions used to compose test scripts are available through <a href="https://github.com/dtmilano/AndroidViewClient">AndroidViewClient</a> by <a href="https://github.com/dtmilano" class="user-mention">@dtmilano</a>. This project will focus on tools to inspect, correlate, and validate the set of generated test results. Pull requests are, of course, welcome.</p>
+
+<h2>
 <a name="getting-set-up" class="anchor" href="#getting-set-up"><span class="octicon octicon-link"></span></a>Getting set up</h2>
 
 <p>This assumes your environment has <code>python</code>, <code>easy_install</code> and <code>git</code>. You may confirm each installation by typing the following commands in your Terminal.</p>
@@ -264,7 +266,7 @@ Working directory: some-directory
 
 <h4>
 <a name="q-how-can-i-pass-or-fail-my-tests-based-on-user-generated-events-that-dont-result-in-ui-implications" class="anchor" href="#q-how-can-i-pass-or-fail-my-tests-based-on-user-generated-events-that-dont-result-in-ui-implications"><span class="octicon octicon-link"></span></a>
-<strong>Q:</strong> How can I pass or fail my tests based on user generated events that don't result in UI implications?</h4>
+<strong>Q:</strong> How can I pass or fail my tests based on 'user-generated' events that don't result in UI implications?</h4>
 
 <p><strong>A:</strong> Again, yksp mocks out the user. Within the PyUnit test method, this mock user can generate events as input, and inspect the UI elements to validate the visible part of the output. However, input events can also result in output not  immediately visible through the UI, such as a state change:</p>
 
