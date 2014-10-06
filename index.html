@@ -316,13 +316,6 @@ android.widget.FrameLayout id/no_id/1
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'ANDROID_VIEW_CLIENT_HOME'</span><span class="p">],</span> <span class="s">'src'</span><span class="p">))</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="k">pass</span>
-
-<span class="kn">from</span> <span class="nn">com.dtmilano.android.viewclient</span> <span class="kn">import</span> <span class="n">ViewNotFoundException</span>
-
-<span class="k">try</span><span class="p">:</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'YKSP_HOME'</span><span class="p">])</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="k">pass</span>
