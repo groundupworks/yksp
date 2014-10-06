@@ -12,6 +12,6 @@ A fully Python-based tool that helps you automate Android UI testing and capture
 * Execution of tests on all connected devices in parallel
 * Device properties dump, including the device model and installed Android version
 
-Higher abstractions of UI interactions used to compose test scripts are available through [AndroidViewClient](https://github.com/dtmilano/AndroidViewClient) by @dtmilano. This project will focus on tools to inspect, correlate, and validate the set of generated test results. Pull requests are, of course, welcome.
+You can see yksp in action [here](https://www.facebook.com/video.php?v=688024157960505). Higher abstractions of UI interactions used to compose test scripts are available through [AndroidViewClient](https://github.com/dtmilano/AndroidViewClient) by @dtmilano. This project will focus on tools to inspect, correlate, and validate the set of generated test results. Pull requests are, of course, welcome.
 
 Refer to the [Project Site](http://benhylau.github.io/yksp) to get started.
