@@ -53,7 +53,8 @@ DIR_TEST_RESULTS = 'results'
 DIR_TEST_SESSION = '%s/%s' % (DIR_TEST_RESULTS, datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d-%H-%M-%S'))
 
 PACKAGE_BACKUP_CONFIRM = 'com.android.backupconfirm'
-ID_BUTTON_BACKUP_ACCEPT = 'id/no_id/21'
+ID_BUTTON_BACKUP_ACCEPT = 'com.android.backupconfirm:id/button_allow'
+TEXT_BUTTON_BACKUP_ACCEPT = 'Back up my data'
 
 ###################
 # Global variables
@@ -370,6 +371,8 @@ def executeTestCase(packageName, serialNumber, dirRoot, scriptFilename, dataDump
         device, serialno = ViewClient.connectToDeviceOrExit(serialno=serialNumber)
         vc = ViewClient(device, serialno)
         acceptButton = vc.findViewById(ID_BUTTON_BACKUP_ACCEPT)
+        if acceptButton is None:
+            acceptButton = vc.findViewWithText(TEXT_BUTTON_BACKUP_ACCEPT)
         if acceptButton and acceptButton.isEnabled():
             acceptButton.touch()
 
