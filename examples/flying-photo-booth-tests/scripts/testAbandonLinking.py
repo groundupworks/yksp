@@ -26,13 +26,13 @@ except:
 from yksptestcase import YkspTestCase
 
 # The unique ID of the Preferences button is identified using the 'dump' tool
-ID_BUTTON_PREFERENCES = 'id/no_id/11'
+ID_BUTTON_PREFERENCES = 'com.groundupworks.flyingphotobooth:id/preferences_button'
 
 TEXT_PREFERENCES = 'Preferences'
 TEXT_ARRANGEMENT = 'Arrangement'
 TEXT_LINK = 'Enable one-click or auto share'
 
-NUM_LINKABLE_SERVICES = 2
+NUM_LINKABLE_SERVICES = 3
 
 PACKAGE_FACEBOOK = 'com.facebook.katana'
 PACKAGE_DROPBOX = 'com.dropbox.android'
@@ -83,7 +83,7 @@ class AbandonLinkingTest(YkspTestCase):
             if view.getText() == TEXT_LINK:
                 linkViews.append(view)
         
-        # Assert that two linkable services are found
+        # Assert that NUM_LINKABLE_SERVICES linkable services are found
         self.assertEqual(len(linkViews), NUM_LINKABLE_SERVICES, 'Found only %s linkable services, expected %s' % (len(linkViews), NUM_LINKABLE_SERVICES))
 
         # Iterate over list of link views
