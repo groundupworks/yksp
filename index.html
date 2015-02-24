@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>yksp by benhylau</title>
+    <title>yksp by groundupworks</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -20,12 +20,12 @@
         <p class="header">let &#39;em test &#39;emselves</p>
 
         <ul>
-          <li class="download"><a class="buttons" href="https://github.com/benhylau/yksp/zipball/master">Download ZIP</a></li>
-          <li class="download"><a class="buttons" href="https://github.com/benhylau/yksp/tarball/master">Download TAR</a></li>
-          <li><a class="buttons github" href="https://github.com/benhylau/yksp">View On GitHub</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/groundupworks/yksp/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/groundupworks/yksp/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/groundupworks/yksp">View On GitHub</a></li>
         </ul>
 
-        <p class="header">This project is maintained by <a class="header name" href="https://github.com/benhylau">benhylau</a></p>
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/groundupworks">groundupworks</a></p>
 
 
       </header>
@@ -41,10 +41,12 @@
 <li>Backup file that can be used to restore your device state from each test</li>
 <li>Execution of tests on all connected devices in parallel</li>
 <li>Device properties dump, including the device model and installed Android version</li>
-</ul><p>You can see yksp in action <a href="https://www.facebook.com/video.php?v=688024157960505">here</a>. Higher abstractions of UI interactions used to compose test scripts are available through <a href="https://github.com/dtmilano/AndroidViewClient">AndroidViewClient</a> by <a href="https://github.com/dtmilano" class="user-mention">@dtmilano</a>. This project will focus on tools to inspect, correlate, and validate the set of generated test results. Pull requests are, of course, welcome.</p>
+</ul>
+
+<p>You can see yksp in action <a href="https://www.facebook.com/video.php?v=688024157960505">here</a>. Higher abstractions of UI interactions used to compose test scripts are available through <a href="https://github.com/dtmilano/AndroidViewClient">AndroidViewClient</a> by <a href="https://github.com/dtmilano" class="user-mention">@dtmilano</a>. This project will focus on tools to inspect, correlate, and validate the set of generated test results. Pull requests are, of course, welcome.</p>
 
 <h2>
-<a name="getting-set-up" class="anchor" href="#getting-set-up"><span class="octicon octicon-link"></span></a>Getting set up</h2>
+<a id="getting-set-up" class="anchor" href="#getting-set-up" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting set up</h2>
 
 <p>This assumes your environment has <code>python</code>, <code>easy_install</code> and <code>git</code>. You may confirm each installation by typing the following commands in your Terminal.</p>
 
@@ -54,7 +56,7 @@ $ which git
 </code></pre>
 
 <h3>
-<a name="step-one" class="anchor" href="#step-one"><span class="octicon octicon-link"></span></a>step one</h3>
+<a id="step-one" class="anchor" href="#step-one" aria-hidden="true"><span class="octicon octicon-link"></span></a>step one</h3>
 
 <p>You may skip this step if you already have the <strong>Android SDK</strong> installed.</p>
 
@@ -64,7 +66,9 @@ $ which git
 <li>Android SDK Tools</li>
 <li>Android SDK Platform-tools</li>
 <li>Android SDK Build-tools</li>
-</ol><p>You will download these tools by using yet another tool, which is included in the SDK package. Replace <code>android-sdk-root</code> with the local path to your extracted SDK root directory.</p>
+</ol>
+
+<p>You will download these tools by using yet another tool, which is included in the SDK package. Replace <code>android-sdk-root</code> with the local path to your extracted SDK root directory.</p>
 
 <pre><code>$ cd android-sdk-root/tools
 $ ./android list sdk --all
@@ -72,7 +76,7 @@ $ ./android update sdk --no-ui --all --filter 1,2,3
 </code></pre>
 
 <h3>
-<a name="step-two" class="anchor" href="#step-two"><span class="octicon octicon-link"></span></a>step two</h3>
+<a id="step-two" class="anchor" href="#step-two" aria-hidden="true"><span class="octicon octicon-link"></span></a>step two</h3>
 
 <p>Install <strong>Pillow</strong> and <strong>AndroidViewClient</strong>.</p>
 
@@ -82,18 +86,18 @@ $ sudo easy_install --upgrade androidviewclient
 </code></pre>
 
 <h3>
-<a name="step-three" class="anchor" href="#step-three"><span class="octicon octicon-link"></span></a>step three</h3>
+<a id="step-three" class="anchor" href="#step-three" aria-hidden="true"><span class="octicon octicon-link"></span></a>step three</h3>
 
 <p>Clone the <strong>yksp</strong> repo, and <strong>AndroidViewClient</strong> as a submodule.</p>
 
-<pre><code>$ git clone git://github.com/benhylau/yksp.git
+<pre><code>$ git clone git://github.com/groundupworks/yksp.git
 $ cd yksp
 $ git submodule init
 $ git submodule update
 </code></pre>
 
 <h3>
-<a name="step-four" class="anchor" href="#step-four"><span class="octicon octicon-link"></span></a>step four</h3>
+<a id="step-four" class="anchor" href="#step-four" aria-hidden="true"><span class="octicon octicon-link"></span></a>step four</h3>
 
 <p>Set the environment variable <code>$YKSP_HOME</code>, and also <code>$ANDROID_HOME</code> if not already set. Then configure your <code>$PATH</code>.</p>
 
@@ -124,7 +128,7 @@ export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME
 <p>And... you're all set!</p>
 
 <h2>
-<a name="running-the-example" class="anchor" href="#running-the-example"><span class="octicon octicon-link"></span></a>Running the example</h2>
+<a id="running-the-example" class="anchor" href="#running-the-example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running the example</h2>
 
 <p>The yksp repo has an <code>examples/flying-photo-booth-tests</code> folder, containing the <a href="https://play.google.com/store/apps/details?id=com.groundupworks.flyingphotobooth">Flying PhotoBooth</a> APK, along with its PyUnit test scripts in a <code>scripts</code> folder. Connect one or more Android devices to your computer. Ensure that the device is made USB debuggable and screen lock is disabled (like, completely off... not even Swipe Unlock). This is how you would run a typical yksp test session.</p>
 
@@ -197,7 +201,7 @@ All 2 test scripts executed on 1 device in 93 seconds
 </code></pre>
 
 <h3>
-<a name="what-just-happened" class="anchor" href="#what-just-happened"><span class="octicon octicon-link"></span></a>what just happened?</h3>
+<a id="what-just-happened" class="anchor" href="#what-just-happened" aria-hidden="true"><span class="octicon octicon-link"></span></a>what just happened?</h3>
 
 <p>The test session logs should give a pretty good idea of what yksp is doing, but here is a better view.</p>
 
@@ -228,7 +232,7 @@ Report completion of test session
 </code></pre>
 
 <h3>
-<a name="where-are-my-results" class="anchor" href="#where-are-my-results"><span class="octicon octicon-link"></span></a>where are my results?</h3>
+<a id="where-are-my-results" class="anchor" href="#where-are-my-results" aria-hidden="true"><span class="octicon octicon-link"></span></a>where are my results?</h3>
 
 <p>Test results are organized in a directory structure that would allow a script to easily walk the tree and generate reports from a data set involving multiple devices and test sessions.</p>
 
@@ -268,16 +272,15 @@ Report completion of test session
 </code></pre>
 
 <h2>
-<a name="creating-test-scripts" class="anchor" href="#creating-test-scripts"><span class="octicon octicon-link"></span></a>Creating test scripts</h2>
+<a id="creating-test-scripts" class="anchor" href="#creating-test-scripts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating test scripts</h2>
 
-<p>Test scripts define subclasses of <code>YkspTestCase</code> based on the <a href="https://wiki.python.org/moin/PyUnit">PyUnit</a> framework. You will define and implement one or more methods with names starting with <code>test</code>, like such <code>def testSomething(self):</code>. To figure out what goes in the implementation, a good way to start is to look at <a href="https://github.com/benhylau/yksp/blob/master/examples/flying-photo-booth-tests/scripts/testCapture.py">testCapture.py</a> and <a href="https://github.com/benhylau/yksp/blob/master/examples/flying-photo-booth-tests/scripts/testAbandonLinking.py">testAbandonLinking.py</a> in <code>examples/flying-photo-booth-tests/scripts</code>.</p>
+<p>Test scripts define subclasses of <code>YkspTestCase</code> based on the <a href="https://wiki.python.org/moin/PyUnit">PyUnit</a> framework. You will define and implement one or more methods with names starting with <code>test</code>, like such <code>def testSomething(self):</code>. To figure out what goes in the implementation, a good way to start is to look at <a href="https://github.com/groundupworks/yksp/blob/master/examples/flying-photo-booth-tests/scripts/testCapture.py">testCapture.py</a> and <a href="https://github.com/groundupworks/yksp/blob/master/examples/flying-photo-booth-tests/scripts/testAbandonLinking.py">testAbandonLinking.py</a> in <code>examples/flying-photo-booth-tests/scripts</code>.</p>
 
-<p>From the examples, you will find that the <code>YkspTestCase</code> class provides the following convenience methods, documented <a href="https://github.com/benhylau/yksp/blob/master/yksp/yksptestcase.py">here</a>.</p>
+<p>From the examples, you will find that the <code>YkspTestCase</code> class provides the following convenience methods, documented <a href="https://github.com/groundupworks/yksp/blob/master/yksp/yksptestcase.py">here</a>.</p>
 
-<div class="highlight highlight-python"><pre><span class="n">launchApp</span><span class="p">(</span><span class="n">package</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-<span class="n">refreshScreen</span><span class="p">(</span><span class="n">sleep</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">saveScreen</span><span class="p">(</span><span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</pre></div>
+<div class="highlight highlight-python"><pre>launchApp(<span class="pl-vpf">package</span><span class="pl-k">=</span><span class="pl-c1">None</span>)
+refreshScreen(<span class="pl-vpf">sleep</span><span class="pl-k">=</span><span class="pl-c1">1</span>)
+saveScreen(<span class="pl-vpf">tag</span><span class="pl-k">=</span><span class="pl-c1">None</span>, <span class="pl-vpf">sleep</span><span class="pl-k">=</span><span class="pl-c1">1</span>)</pre></div>
 
 <p>It is important that <code>refreshScreen()</code> or <code>saveScreen()</code> be called after each screen transition on your device, in order for the test to pick up the updated view tree.</p>
 
@@ -311,35 +314,34 @@ android.widget.FrameLayout id/no_id/1
 
 <p>After all that, here is a template to get you started!</p>
 
-<div class="highlight highlight-python"><pre><span class="c">#! /usr/bin/env python</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<div class="highlight highlight-python"><pre><span class="pl-c">#! /usr/bin/env python</span>
+<span class="pl-k">import</span> sys
+<span class="pl-k">import</span> os
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'YKSP_HOME'</span><span class="p">])</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="k">pass</span>
+<span class="pl-k">try</span>:
+    sys.path.append(os.environ[<span class="pl-s1"><span class="pl-pds">'</span>YKSP_HOME<span class="pl-pds">'</span></span>])
+<span class="pl-k">except</span>:
+    <span class="pl-k">pass</span>
 
-<span class="kn">from</span> <span class="nn">yksptestcase</span> <span class="kn">import</span> <span class="n">YkspTestCase</span>
+<span class="pl-k">from</span> yksptestcase <span class="pl-k">import</span> YkspTestCase
 
-<span class="k">class</span> <span class="nc">MyTestCase</span><span class="p">(</span><span class="n">YkspTestCase</span><span class="p">):</span>
+<span class="pl-st">class</span> <span class="pl-en">MyTestCase</span>(<span class="pl-e">YkspTestCase</span>):
 
-    <span class="k">def</span> <span class="nf">testSomething</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">'''</span>
-<span class="sd">        Tests something... like geese, mustard, cabbages and kings.</span>
-<span class="sd">        '''</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">launchApp</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">saveScreen</span><span class="p">(</span><span class="s">'my-start-screen'</span><span class="p">,</span> <span class="n">sleep</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="pl-st">def</span> <span class="pl-en">testSomething</span>(<span class="pl-vpf">self</span>):
+        <span class="pl-s1"><span class="pl-pds">'''</span></span>
+<span class="pl-s1">        Tests something... like geese, mustard, cabbages and kings.</span>
+<span class="pl-s1">        <span class="pl-pds">'''</span></span>
+        <span class="pl-v">self</span>.launchApp()
+        <span class="pl-v">self</span>.saveScreen(<span class="pl-s1"><span class="pl-pds">'</span>my-start-screen<span class="pl-pds">'</span></span>, <span class="pl-vpf">sleep</span><span class="pl-k">=</span><span class="pl-c1">1</span>)
 
-        <span class="c"># Your implementation...</span>
+        <span class="pl-c"># Your implementation...</span>
 
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
-    <span class="n">YkspTestCase</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
-</pre></div>
+<span class="pl-k">if</span> <span class="pl-sv">__name__</span> <span class="pl-k">==</span> <span class="pl-s1"><span class="pl-pds">'</span>__main__<span class="pl-pds">'</span></span>:
+    YkspTestCase.main(sys.argv)</pre></div>
 
 <h2>
-<a name="run-options" class="anchor" href="#run-options"><span class="octicon octicon-link"></span></a>Run options</h2>
+<a id="run-options" class="anchor" href="#run-options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Run options</h2>
 
 <p>yksp has run options to support various use cases. You can see those by entering the following in your Terminal. </p>
 
@@ -353,14 +355,14 @@ Usage:
 </code></pre>
 
 <h3>
-<a name="--linear" class="anchor" href="#--linear"><span class="octicon octicon-link"></span></a>--linear</h3>
+<a id="--linear" class="anchor" href="#--linear" aria-hidden="true"><span class="octicon octicon-link"></span></a>--linear</h3>
 
 <p>By default, yksp spawns multiple processes to execute test scripts on all connected devices in parallel. You may force yksp to run the scripts on one device after another using this flag. It is useful when debugging your test scripts, since the test logs in your Terminal will look cleaner.</p>
 
 <p>Note that this does not imply everything is executed in a single process, as yksp uses multiple processes to do everything it needs to do even for a single device.</p>
 
 <h3>
-<a name="--noapk" class="anchor" href="#--noapk"><span class="octicon octicon-link"></span></a>--noapk</h3>
+<a id="--noapk" class="anchor" href="#--noapk" aria-hidden="true"><span class="octicon octicon-link"></span></a>--noapk</h3>
 
 <p>This option allows launching off a pre-installed application, specified by its package name. No APK needs to be provided, and yksp will ignore any APK in your directory and skip installation (and uninstallation) altogether. A verification step is performed on each connected device to verify that the application is already installed, and the test scripts will be executed only on the subset of devices that are verified.</p>
 
@@ -372,7 +374,7 @@ Working directory: some-directory
 </code></pre>
 
 <h3>
-<a name="--nodump" class="anchor" href="#--nodump"><span class="octicon octicon-link"></span></a>--nodump</h3>
+<a id="--nodump" class="anchor" href="#--nodump" aria-hidden="true"><span class="octicon octicon-link"></span></a>--nodump</h3>
 
 <p>After executing each test script, yksp utilizes the <code>adb backup</code> command to generate the backup file <code>data.ab</code>. The file itself can be used to restore the device state, as it contains all the locally persisted app data, including preferences and databases. yksp also extracts the file into the <code>data</code> folder, which you can conveniently use to validate the state changes as a result of the test script.</p>
 
@@ -381,16 +383,16 @@ Working directory: some-directory
 <p>The data dump is usually fast, but can optionally be disabled with this flag.</p>
 
 <h2>
-<a name="mildly-faq" class="anchor" href="#mildly-faq"><span class="octicon octicon-link"></span></a>Mildly-faq</h2>
+<a id="mildly-faq" class="anchor" href="#mildly-faq" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mildly-faq</h2>
 
 <h4>
-<a name="q-can-my-pyunit-test-script-mock-out-components-in-my-application-as-part-of-the-test" class="anchor" href="#q-can-my-pyunit-test-script-mock-out-components-in-my-application-as-part-of-the-test"><span class="octicon octicon-link"></span></a>
+<a id="q-can-my-pyunit-test-script-mock-out-components-in-my-application-as-part-of-the-test" class="anchor" href="#q-can-my-pyunit-test-script-mock-out-components-in-my-application-as-part-of-the-test" aria-hidden="true"><span class="octicon octicon-link"></span></a>
 <strong>Q:</strong> Can my PyUnit test script mock out components in my application as part of the test?</h4>
 
 <p><strong>A:</strong> The short answer is no. yksp tests an APK, or a pre-installed app, as is. It cannot inject classes into your application, or switch up any build-time configurations. It doesn't mock parts of your application; it mocks you. One way around this limitation is to build the mock components into your APK, make the build-time configurations into run-time configurations, then use UI toggles or a special launch Intent to invoke a code path utilizing the mock components.</p>
 
 <h4>
-<a name="q-how-can-i-pass-or-fail-my-tests-based-on-user-generated-events-that-dont-result-in-ui-implications" class="anchor" href="#q-how-can-i-pass-or-fail-my-tests-based-on-user-generated-events-that-dont-result-in-ui-implications"><span class="octicon octicon-link"></span></a>
+<a id="q-how-can-i-pass-or-fail-my-tests-based-on-user-generated-events-that-dont-result-in-ui-implications" class="anchor" href="#q-how-can-i-pass-or-fail-my-tests-based-on-user-generated-events-that-dont-result-in-ui-implications" aria-hidden="true"><span class="octicon octicon-link"></span></a>
 <strong>Q:</strong> How can I pass or fail my tests based on 'user-generated' events that don't result in UI implications?</h4>
 
 <p><strong>A:</strong> Again, yksp mocks out the user. Within the PyUnit test method, this mock user can generate events as input, and inspect the UI elements to validate the visible part of the output. However, input events can also result in output not  immediately visible through the UI, such as a state change:</p>
@@ -399,12 +401,14 @@ Working directory: some-directory
 <li>of an in-memory variable</li>
 <li>in locally persisted preferences or databases</li>
 <li>on a remote server</li>
-</ul><p>The first one is irrelevant, unless there is a way to confirm it through the UI. If a human is to validate the second and third cases, it would be via a database dump, check some server state via a server API call, or in some cases, inspection of the logcat output may be sufficient. Although it is possible to do all of the above within the test case itself and do assertion, using regular Python and adb commands, the recommended way is to use the PyUnit assertions to validate only the UI.</p>
+</ul>
+
+<p>The first one is irrelevant, unless there is a way to confirm it through the UI. If a human is to validate the second and third cases, it would be via a database dump, check some server state via a server API call, or in some cases, inspection of the logcat output may be sufficient. Although it is possible to do all of the above within the test case itself and do assertion, using regular Python and adb commands, the recommended way is to use the PyUnit assertions to validate only the UI.</p>
 
 <p>Since yksp dumps out the locally persisted app data and the logcat output after running each test script, just make use of those! Look at the results of the many test sessions as your data set, of which the PyUnit results is only one of the many components. You can write scripts to validate state changes, compare view trees and generate image similarity indices, correlate results across different devices and test sessions, and generate reports that are more comprehensive and meaningful.</p>
 
 <h4>
-<a name="q-why-is-the-name-weird" class="anchor" href="#q-why-is-the-name-weird"><span class="octicon octicon-link"></span></a>
+<a id="q-why-is-the-name-weird" class="anchor" href="#q-why-is-the-name-weird" aria-hidden="true"><span class="octicon octicon-link"></span></a>
 <strong>Q:</strong> Why is the name weird?</h4>
 
 <p><strong>A:</strong> Maybe because it consists entirely of consonants? Although the <em>y</em> is debatable.</p>
