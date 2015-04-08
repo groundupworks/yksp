@@ -278,9 +278,9 @@ Report completion of test session
 
 <p>From the examples, you will find that the <code>YkspTestCase</code> class provides the following convenience methods, documented <a href="https://github.com/groundupworks/yksp/blob/master/yksp/yksptestcase.py">here</a>.</p>
 
-<div class="highlight highlight-python"><pre>launchApp(<span class="pl-vpf">package</span><span class="pl-k">=</span><span class="pl-c1">None</span>)
-refreshScreen(<span class="pl-vpf">sleep</span><span class="pl-k">=</span><span class="pl-c1">1</span>)
-saveScreen(<span class="pl-vpf">tag</span><span class="pl-k">=</span><span class="pl-c1">None</span>, <span class="pl-vpf">sleep</span><span class="pl-k">=</span><span class="pl-c1">1</span>)</pre></div>
+<div class="highlight highlight-python"><pre>launchApp(<span class="pl-smi">package</span><span class="pl-k">=</span><span class="pl-c1">None</span>)
+refreshScreen(<span class="pl-smi">sleep</span><span class="pl-k">=</span><span class="pl-c1">1</span>)
+saveScreen(<span class="pl-smi">tag</span><span class="pl-k">=</span><span class="pl-c1">None</span>, <span class="pl-smi">sleep</span><span class="pl-k">=</span><span class="pl-c1">1</span>)</pre></div>
 
 <p>It is important that <code>refreshScreen()</code> or <code>saveScreen()</code> be called after each screen transition on your device, in order for the test to pick up the updated view tree.</p>
 
@@ -291,23 +291,11 @@ saveScreen(<span class="pl-vpf">tag</span><span class="pl-k">=</span><span class
 <p>When writing test scripts, while you can find certain views by text sometimes, you will encounter UI elements like an image button, which you need to identify by a unique ID in the view tree. This is when the <code>dump</code> tool in AndroidViewClient becomes handy. Just manually navigate to the screen on your connected device, then type that in Terminal and pick out the ID you need from the view tree.</p>
 
 <pre><code>$ dump
-android.widget.FrameLayout id/no_id/1 
-   android.widget.LinearLayout id/no_id/2 
-      android.widget.FrameLayout id/no_id/3 
-         android.widget.FrameLayout id/no_id/4 
-            android.widget.FrameLayout id/no_id/5 
-               android.widget.FrameLayout id/no_id/6 
-                  android.widget.LinearLayout id/no_id/7 
-                     android.widget.RelativeLayout id/no_id/8 
-                        android.widget.TextView id/no_id/9 PHOTO 1 OF 2
-                        android.widget.ImageButton id/no_id/10 
-                        android.widget.ImageButton id/no_id/11 
-                     android.widget.RelativeLayout id/no_id/12 
-                        android.view.View id/no_id/13 
-                           android.view.View id/no_id/14 
-                           android.view.View id/no_id/15 
-                           android.view.View id/no_id/16 
-                        android.widget.Button id/no_id/17 CAPTURE
+android.widget.FrameLayout  
+   android.widget.TextView com.groundupworks.flyingphotobooth:id/title PHOTO 1 OF 2
+   android.widget.ImageButton com.groundupworks.flyingphotobooth:id/switch_button 
+   android.widget.ImageButton com.groundupworks.flyingphotobooth:id/preferences_button 
+   android.widget.Button com.groundupworks.flyingphotobooth:id/start_button CAPTURE
 </code></pre>
 
 <p>Lastly, it is important to remember that while an app data wipe is performed before and after running each test script to remove the persistent data stored, that is not the case in between test methods within the same script. Instead, the app is killed between test methods, which means in-memory states are destroyed, but disk-persisted states are carried across. For each test to have a true 'fresh start', it is recommended that you separate out your tests into different files, with only a single test method in each <code>YkspTestCase</code> subclass.</p>
@@ -319,25 +307,25 @@ android.widget.FrameLayout id/no_id/1
 <span class="pl-k">import</span> os
 
 <span class="pl-k">try</span>:
-    sys.path.append(os.environ[<span class="pl-s1"><span class="pl-pds">'</span>YKSP_HOME<span class="pl-pds">'</span></span>])
+    sys.path.append(os.environ[<span class="pl-s"><span class="pl-pds">'</span>YKSP_HOME<span class="pl-pds">'</span></span>])
 <span class="pl-k">except</span>:
     <span class="pl-k">pass</span>
 
 <span class="pl-k">from</span> yksptestcase <span class="pl-k">import</span> YkspTestCase
 
-<span class="pl-st">class</span> <span class="pl-en">MyTestCase</span>(<span class="pl-e">YkspTestCase</span>):
+<span class="pl-k">class</span> <span class="pl-en">MyTestCase</span>(<span class="pl-e">YkspTestCase</span>):
 
-    <span class="pl-st">def</span> <span class="pl-en">testSomething</span>(<span class="pl-vpf">self</span>):
-        <span class="pl-s1"><span class="pl-pds">'''</span></span>
-<span class="pl-s1">        Tests something... like geese, mustard, cabbages and kings.</span>
-<span class="pl-s1">        <span class="pl-pds">'''</span></span>
+    <span class="pl-k">def</span> <span class="pl-en">testSomething</span>(<span class="pl-smi">self</span>):
+        <span class="pl-s"><span class="pl-pds">'''</span></span>
+<span class="pl-s">        Tests something... like geese, mustard, cabbages and kings.</span>
+<span class="pl-s">        <span class="pl-pds">'''</span></span>
         <span class="pl-v">self</span>.launchApp()
-        <span class="pl-v">self</span>.saveScreen(<span class="pl-s1"><span class="pl-pds">'</span>my-start-screen<span class="pl-pds">'</span></span>, <span class="pl-vpf">sleep</span><span class="pl-k">=</span><span class="pl-c1">1</span>)
+        <span class="pl-v">self</span>.saveScreen(<span class="pl-s"><span class="pl-pds">'</span>my-start-screen<span class="pl-pds">'</span></span>, <span class="pl-smi">sleep</span><span class="pl-k">=</span><span class="pl-c1">1</span>)
 
         <span class="pl-c"># Your implementation...</span>
 
 
-<span class="pl-k">if</span> <span class="pl-sv">__name__</span> <span class="pl-k">==</span> <span class="pl-s1"><span class="pl-pds">'</span>__main__<span class="pl-pds">'</span></span>:
+<span class="pl-k">if</span> <span class="pl-c1">__name__</span> <span class="pl-k">==</span> <span class="pl-s"><span class="pl-pds">'</span>__main__<span class="pl-pds">'</span></span>:
     YkspTestCase.main(sys.argv)</pre></div>
 
 <h2>
@@ -414,7 +402,7 @@ Working directory: some-directory
 <p><strong>A:</strong> Maybe because it consists entirely of consonants? Although the <em>y</em> is debatable.</p>
       </section>
       <footer>
-        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
       </footer>
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
